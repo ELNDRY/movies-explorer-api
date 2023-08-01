@@ -2,10 +2,10 @@ const corsOptions = {
   origin: [
     'http://localhost:3000',
     'https://localhost:3000',
-    'http://elndry.students.nomoredomains.xyz',
-    'https://elndry.students.nomoredomains.xyz',
-    'http://api.elndry.students.nomoredomains.xyz',
-    'https://api.elndry.students.nomoredomains.xyz',
+    'http://elndry.movies-explorer.nomoreparties.co',
+    'https://elndry.movies-explorer.nomoreparties.co',
+    'http://api.elndry.movie-explorer.nomoreparties.co',
+    'https://api.elndry.movie-explorer.nomoreparties.co',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   // eslint-disable-next-line quotes
