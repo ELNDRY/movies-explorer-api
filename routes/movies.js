@@ -5,7 +5,7 @@ const controller = require('../controllers/movies');
 const router = express.Router();
 const URLregEx = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/;
 
-router.get('/movies', controller.getCards);
+router.get('/movies', controller.getMovies);
 
 router.post('/movies', celebrate({
   body: Joi.object().keys({

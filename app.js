@@ -9,7 +9,7 @@ const { errors } = require('celebrate');
 const cors = require('cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const usersRouter = require('./routes/users');
-const cardsRouter = require('./routes/movie');
+const moviesRouter = require('./routes/movies');
 const authRouter = require('./routes/auth');
 const authVerifier = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
@@ -45,7 +45,7 @@ app.get('/crash-test', () => {
 app.use('/', authRouter);
 app.use('/', authVerifier);
 app.use('/', usersRouter);
-app.use('/', cardsRouter);
+app.use('/', moviesRouter);
 app.use('*', (req, res, next) => {
   next(new NotFoundError('Страница не найдена.'));
 });
