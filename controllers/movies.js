@@ -37,6 +37,7 @@ const createMovie = (req, res, next) => {
     movieId,
     nameRU,
     nameEN,
+    owner: req.user._id,
   })
     .then((movie) => res.status(201).json(movie))
     .catch((err) => {
@@ -61,7 +62,7 @@ const deleteMovie = (req, res, next) => {
         next(new ForbiddenError('Нет права на удаление данного фильма.'));
       }
       Movie.deleteOne(movie).then(() => {
-        res.status(200).send({ message: 'Фильм удален' });
+        res.status(200).send({ message: 'Фильм удален.' });
       })
         .catch(next);
     })
