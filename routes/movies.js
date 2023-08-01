@@ -3,7 +3,6 @@ const { celebrate, Joi } = require('celebrate');
 const controller = require('../controllers/movies');
 
 const router = express.Router();
-const URLregEx = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/;
 
 router.get('/movies', controller.getMovies);
 
@@ -14,16 +13,16 @@ router.post('/movies', celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required().min(1).max(10),
     description: Joi.string().required().min(1).max(3000),
-    image: Joi.string().required().pattern(URLregEx),
-    trailerLink: Joi.string().required().pattern(URLregEx),
-    thumbnail: Joi.string().required().pattern(URLregEx),
+    image: Joi.string().required().uri(),
+    trailerLink: Joi.string().required().uri(),
+    thumbnail: Joi.string().required().uri(),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required().min(1).max(200),
     nameEN: Joi.string().required().min(1).max(200),
   }),
 }), controller.createMovie);
 
-router.delete('/cards/:cardId', celebrate({
+router.delete('/movies/:movieId', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().required().length(24).hex(),
   }),

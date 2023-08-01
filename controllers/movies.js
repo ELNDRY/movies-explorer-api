@@ -41,7 +41,7 @@ const createMovie = (req, res, next) => {
     .then((movie) => res.status(201).json(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
+        next(new BadRequestError('Переданы некорректные данные при добавлении фильма.'));
       } else {
         next(err);
       }
@@ -56,12 +56,12 @@ const deleteMovie = (req, res, next) => {
     .orFail()
     .then((movie) => {
       if (!movie) {
-        next(new NotFoundError('Карточка с указанным _id не найдена.'));
+        next(new NotFoundError('Фильм с указанным _id не найден.'));
       } else if (movie.owner.toString() !== userId) {
-        next(new ForbiddenError('Нет права на удаление данной карточки.'));
+        next(new ForbiddenError('Нет права на удаление данного фильма.'));
       }
       Movie.deleteOne(movie).then(() => {
-        res.status(200).send({ message: 'Карточка удалена' });
+        res.status(200).send({ message: 'Фильм удален' });
       })
         .catch(next);
     })
@@ -69,7 +69,7 @@ const deleteMovie = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Передан некорректный _id.'));
       } else if (err.name === 'DocumentNotFoundError') {
-        next(new NotFoundError('Карточка с указанным _id не найдена.'));
+        next(new NotFoundError('Фильм с указанным _id не найден.'));
       } else {
         next(err);
       }
