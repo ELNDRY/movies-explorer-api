@@ -48,9 +48,9 @@ const createUser = (req, res, next) => {
 };
 
 const editUser = (req, res, next) => {
-  const { name, about } = req.body;
+  const { email, name } = req.body;
   const userId = req.user._id;
-  User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(userId, { email, name }, { new: true, runValidators: true })
     .orFail()
     .then((user) => res.json(user))
     .catch((err) => {
