@@ -5,7 +5,7 @@ const router = express.Router();
 const usersRouter = require('./users');
 const moviesRouter = require('./movies');
 const authRouter = require('./auth');
-const authVerifier = require('./auth');
+const authVerifier = require('../middlewares/auth');
 const NotFoundError = require('../errors/NotFoundError');
 
 router.use('/', authRouter);

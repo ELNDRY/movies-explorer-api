@@ -1,5 +1,5 @@
 const express = require('express');
-const validator = require('../middlewares/validators/movieValodator');
+const validator = require('../middlewares/validators/movieValidator');
 const controller = require('../controllers/movies');
 
 const router = express.Router();
