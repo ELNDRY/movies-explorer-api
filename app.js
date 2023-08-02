@@ -2,31 +2,21 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 const cors = require('cors');
+const limiter = require('./middlewares/rateLimiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const usersRouter = require('./routes/users');
-const moviesRouter = require('./routes/movies');
-const authRouter = require('./routes/auth');
-const authVerifier = require('./middlewares/auth');
+const router = require('./routes/index');
 const errorHandler = require('./middlewares/errorHandler');
-const NotFoundError = require('./errors/NotFoundError');
 const corsOptions = require('./utils/corsOptions');
 
-const PORT = process.env.PORT || 3000;
+const { PORT = 3000, MONGO_URI = 'mongodb://0.0.0.0:27017/bitfilmsdb' } = process.env;
 
 const app = express();
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100, // limit each IP to 100 requests per 'window' - per 15 mins
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-mongoose.connect('mongodb://0.0.0.0:27017/bitfilmsdb');
-
+mongoose.connect(MONGO_URI);
+app.use(limiter);
 app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -35,20 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
 app.use(limiter);
 app.use(cors(corsOptions));
-
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
-
-app.use('/', authRouter);
-app.use('/', authVerifier);
-app.use('/', usersRouter);
-app.use('/', moviesRouter);
-app.use('*', (req, res, next) => {
-  next(new NotFoundError('Страница не найдена.'));
-});
+app.use(router);
 app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
