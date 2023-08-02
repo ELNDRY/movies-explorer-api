@@ -15,7 +15,7 @@ const getUserMe = (req, res, next) => {
     .then((user) => res.json(user))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Пользователь не найден.'));
+        next(new BadRequestError('Переданы некорректные данные.'));
       } else if (err.name === 'DocumentNotFoundError') {
         next(new NotFoundError('Пользователь по указанному _id не найден.'));
       } else {
@@ -54,10 +54,12 @@ const editUser = (req, res, next) => {
     .orFail()
     .then((user) => res.json(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       } else if (err.name === 'DocumentNotFoundError') {
         next(new NotFoundError('Пользователь с указанным _id не найден.'));
+      } else if (err.code === 11000) {
+        next(new AlreadyExistsError('Пользователь с данным e-mail уже существует.'));
       } else {
         next(err);
       }
@@ -79,9 +81,10 @@ const login = (req, res, next) => {
         .status(200)
         .send({ message: 'Успешная авторизация.' });
     })
-    .catch((err) => {
-      next(new UnauthorizedError(err.message));
-    });
+    .catch(() => {
+      throw next(new UnauthorizedError('Неправильный логин или пароль.'));
+    })
+    .catch(next);
 };
 
 const logout = (req, res) => {

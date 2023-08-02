@@ -8,8 +8,7 @@ const corsOptions = {
     'https://api.elndry.movie-explorer.nomoreparties.co',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  // eslint-disable-next-line quotes
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
 
