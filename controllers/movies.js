@@ -59,14 +59,15 @@ const deleteMovie = (req, res, next) => {
     .orFail()
     .then((movie) => {
       if (!movie) {
-        next(new NotFoundError('Фильм с указанным _id не найден.'));
-      } else if (movie.owner.toString() !== userId) {
-        next(new ForbiddenError('Нет права на удаление данного фильма.'));
+        throw new NotFoundError('Фильм с указанным _id не найден.');
       }
-      Movie.deleteOne(movie).then(() => {
-        res.status(200).send({ message: 'Фильм удален.' });
-      })
-        .catch(next);
+      if (movie.owner.toString() !== userId) {
+        throw new ForbiddenError('Нет права на удаление данного фильма.');
+      }
+      return Movie.deleteOne(movie);
+    })
+    .then(() => {
+      res.status(200).send({ message: 'Фильм удален.' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {

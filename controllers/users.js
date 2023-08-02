@@ -70,6 +70,9 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials({ email, password })
     .then((user) => {
+      if (!user) {
+        throw new UnauthorizedError('Неправильный логин  или паро');
+      }
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.setHeader('set-cookie', [
         `jwt=${token}; SameSite=None; Secure`,
@@ -81,10 +84,7 @@ const login = (req, res, next) => {
         .status(200)
         .send({ message: 'Успешная авторизация.' });
     })
-    .catch(() => {
-      throw next(new UnauthorizedError('Неправильный логин или пароль.'));
-    })
-    .catch(next);
+    .catch(() => next(new UnauthorizedError('Не удалось авторизоваться')));
 };
 
 const logout = (req, res) => {
