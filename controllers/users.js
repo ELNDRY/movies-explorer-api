@@ -32,10 +32,20 @@ const createUser = (req, res, next) => {
     .then((hash) => User.create({
       email, password: hash, name,
     }))
-    .then((user) => res.status(201).send({
-      email: user.email,
-      name: user.name,
-    }))
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
+      res.setHeader('set-cookie', [
+        `jwt=${token}; SameSite=None; Secure`,
+      ]);
+      res.cookie('jwt', token, {
+        maxAge: 60 * 60 * 24 * 7000,
+        httpOnly: true,
+      })
+        .status(201).send({
+          email: user.email,
+          name: user.name,
+        });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при регистрации.'));
